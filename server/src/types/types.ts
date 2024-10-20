@@ -35,3 +35,13 @@ interface LinkedInPostMark extends BaseMark {
 interface AssessmentMark extends BaseMark{
     assessmentTitle: string // Title of the assessment
 }
+
+// Interface representing total marks for a student
+interface TotalMarks {
+    studentId: string;             // Unique identifier for the student
+    totalAttendanceMarks: number;   // Total attendance marks
+    totalProjectReviewMarks: number; // Total project review marks
+    totalLinkedInPostMarks: number;  // Total LinkedIn post marks
+    totalAssessmentMarks: number;    // Total assessment marks
+    overallTotal: number;            // Overall total marks
+}
