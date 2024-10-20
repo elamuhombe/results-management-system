@@ -1,5 +1,5 @@
 //src/models/marksModel.ts
-import mongoose, { Schema } from "mongoose";
+import mongoose, { model, Schema } from "mongoose";
 import { IBaseMark, IAttendanceMark, IProjectReviewMark, ILinkedInPostMark, IAssessmentMark } from "../types/types";
 
 // BaseMark schema
@@ -39,7 +39,7 @@ AssessmentMarkSchema.add({
 });
 
 // Exporting the models
-export const AttendanceMarkModel = mongoose.model<IAttendanceMark>('AttendanceMark', AttendanceMarkSchema);
-export const ProjectReviewMarkModel = mongoose.model<IProjectReviewMark>('ProjectReviewMark', ProjectReviewMarkSchema);
-export const LinkedInPostMarkModel = mongoose.model<ILinkedInPostMark>('LinkedInPostMark', LinkedInPostMarkSchema);
-export const AssessmentMarkModel = mongoose.model<IAssessmentMark>('AssessmentMark', AssessmentMarkSchema);
+export const AttendanceMarkModel = model<IAttendanceMark>('AttendanceMark', AttendanceMarkSchema);
+export const ProjectReviewMarkModel = model<IProjectReviewMark>('ProjectReviewMark', ProjectReviewMarkSchema);
+export const LinkedInPostMarkModel = model<ILinkedInPostMark>('LinkedInPostMark', LinkedInPostMarkSchema);
+export const AssessmentMarkModel = model<IAssessmentMark>('AssessmentMark', AssessmentMarkSchema);
