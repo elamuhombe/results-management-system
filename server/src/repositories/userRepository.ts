@@ -3,6 +3,7 @@
 import { userValidationSchema } from "../validation/userValidation";
 import UserModel from "../models/userModel";
 import IUser from "../types/types";
+import bcrypt from 'bcrypt';
 
 class UserRepository {
   // Method to register and save a new user
@@ -20,9 +21,13 @@ class UserRepository {
         `User with email ${validatedUserData.email} already exists.`
       );
     }
+    // encrypt the password before saving
+    const hashedPassword = await bcrypt.hash(validatedUserData.password, 10)
 
     // Create a new user
-    const newUser = await UserModel.create(validatedUserData); // Pass validated user data
+    const newUser = await UserModel.create(
+      {...validatedUserData,
+    password:hashedPassword});
 
     return newUser; // Return the created user
   }
