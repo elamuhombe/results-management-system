@@ -1,5 +1,5 @@
 // src/types/types.ts
-import { Document } from 'mongoose';
+import mongoose, { Document} from 'mongoose';
 
 // Interface representing a user in the system
 export default interface IUser {
@@ -8,6 +8,17 @@ export default interface IUser {
     password: string;        // The password for user authentication
     userRole: 'admin' | 'student'; // The role of the user in the system
 }
+
+
+// Interface representing session
+export interface ISession extends Document {
+  userId: mongoose.Types.ObjectId;  // Reference to the User model
+  expiresAt: Date;  // Session expiration time
+  ipAddress: string;  // IP address of the user
+  userAgent: string;  // Details about the user's browser or device
+  isActive: boolean;  // Status of the session
+}
+
 
 // Base interface for different types of marks
 export  interface IBaseMark extends Document {
