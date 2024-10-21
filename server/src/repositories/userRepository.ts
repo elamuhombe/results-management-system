@@ -2,8 +2,9 @@
 
 import { userValidationSchema } from "../validation/userValidation";
 import UserModel from "../models/userModel";
-import IUser from "../types/types";
+import IUser, { ResetPasswordResponse } from "../types/types";
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 class UserRepository {
   // Method to register and save a new user
@@ -83,5 +84,25 @@ async deleteUser(userData: {email: string}):Promise<IUser | null>{
   }
   return deletedUser;// return the deleted user
 }
+
+// Method to reset user password
+async resetPassword(userData: { email: string }): Promise<ResetPasswordResponse> {
+  // Find the user by email
+  const user = await UserModel.findOne({ email: userData.email });
+
+  // Throw an error if the user does not exist
+  if (!user) {
+    throw new Error(`User with email ${userData.email} does not exist.`);
+  }
+
+  // Generate a reset token
+  const resetToken = jwt.sign({ email: user.email }, process.env.JWT_SECRET || 'your_secret_key', {
+    expiresIn: '1h', // Token valid for 1 hour
+  });
+
+
+  return { user, resetToken }; // Return the user and the reset token
 }
+}
+
 export default UserRepository;
