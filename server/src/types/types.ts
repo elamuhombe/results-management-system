@@ -8,6 +8,10 @@ export default interface IUser {
     password: string;        // The password for user authentication
     userRole: 'admin' | 'student'; // The role of the user in the system
 }
+export interface ResetPasswordResponse {
+    user: IUser;        // The user object
+    resetToken: string; // The generated reset token
+  }
 
 
 // Interface representing session
