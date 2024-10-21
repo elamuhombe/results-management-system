@@ -1,108 +1,88 @@
-//src/repositories/userRepository.ts
+// src/repositories/userRepository.ts
 
-import { userValidationSchema } from "../validation/userValidation";
+import { validateUserData, checkExistingUser, hashPassword, generateResetToken } from "./userValidationRepository";
 import UserModel from "../models/userModel";
 import IUser, { ResetPasswordResponse } from "../types/types";
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
 
 class UserRepository {
   // Method to register and save a new user
   async registerUser(userData: any): Promise<IUser> {
-    // Validate user data using Zod
-    const validatedUserData = await userValidationSchema.parseAsync(userData);
+    const validatedUserData = await validateUserData(userData);
 
-    // Check if the user already exists
-    const existingUser = await UserModel.findOne({
-      email: validatedUserData.email,
-    });
+    const existingUser = await checkExistingUser(validatedUserData.email);
     if (existingUser) {
-      // Throw an error if the user already exists
-      throw new Error(
-        `User with email ${validatedUserData.email} already exists.`
-      );
+      throw new Error(`User with email ${validatedUserData.email} already exists.`);
     }
-    // encrypt the password before saving
-    const hashedPassword = await bcrypt.hash(validatedUserData.password, 10)
+    
+    const hashedPassword = await hashPassword(validatedUserData.password);
+    const newUser = await UserModel.create({
+      ...validatedUserData,
+      password: hashedPassword,
+    });
 
-    // Create a new user
-    const newUser = await UserModel.create(
-      {...validatedUserData,
-    password:hashedPassword});
-
-    return newUser; // Return the created user
+    return newUser;
   }
 
-  //Method to get a specific user
+  // Method to get a specific user
   async getUserData(userData: { email: string }): Promise<IUser | null> {
-    const existingUser = await UserModel.findOne({
-      email: userData.email
-    }).select("-password");// exclude the password
-
-    // Throw an error if user data is not found
+    const existingUser = await UserModel.findOne({ email: userData.email }).select("-password");
+    
     if (!existingUser) {
       throw new Error(`User with email ${userData.email} does not exist.`);
     }
-    // Return existing user
+    
     return existingUser;
   }
 
-  //Method to get all users
-  async getAllUserData(): Promise<IUser[]>{
-    const existingUsers = await UserModel.find()
-      .select('-password')
-       //Throw an error if no users data are found
-       if(existingUsers.length === 0){
-        throw new Error ('There are no users registered')
-       }
-       return existingUsers;
+  // Method to get all users
+  async getAllUserData(): Promise<IUser[]> {
+    const existingUsers = await UserModel.find().select('-password');
+    
+    if (existingUsers.length === 0) {
+      throw new Error('There are no users registered');
+    }
+    
+    return existingUsers;
   }
 
- // Method to update user data
-async updateUserData(userData: { email: string; updates: Partial<IUser> }): Promise<IUser | null> {
-  const updatedUserData = await UserModel.findOneAndUpdate(
-    { email: userData.email }, // Filter by email
-    userData.updates,          // Fields to update
-    { new: true }             // Option to return the updated document
-  ).select('-password');       // Exclude the password
+  // Method to update user data
+  async updateUserData(userData: { email: string; updates: Partial<IUser> }): Promise<IUser | null> {
+    const updatedUserData = await UserModel.findOneAndUpdate(
+      { email: userData.email },
+      userData.updates,
+      { new: true }
+    ).select('-password');
+    
+    if (!updatedUserData) {
+      throw new Error(`Error occurred in updating data for user with email: ${userData.email}`);
+    }
 
-  // Throw an error if there is a problem in updating the user data
-  if (!updatedUserData) {
-    throw new Error(`Error occurred in updating data for user with email: ${userData.email}`);
-  }
-  
-  return updatedUserData; // Return the updated user data
-}
-
-//Method to delete user 
-async deleteUser(userData: {email: string}):Promise<IUser | null>{
-  const deletedUser = await UserModel.findOneAndDelete({email: userData.email});
-
-  // Throw an error if there is a problem with deleting a user
-  if(!deletedUser){
-    throw new Error(`Error occured in deleting user with email: ${userData.email}`);
-  }
-  return deletedUser;// return the deleted user
-}
-
-// Method to reset user password
-async resetPassword(userData: { email: string }): Promise<ResetPasswordResponse> {
-  // Find the user by email
-  const user = await UserModel.findOne({ email: userData.email });
-
-  // Throw an error if the user does not exist
-  if (!user) {
-    throw new Error(`User with email ${userData.email} does not exist.`);
+    return updatedUserData;
   }
 
-  // Generate a reset token
-  const resetToken = jwt.sign({ email: user.email }, process.env.JWT_SECRET || 'your_secret_key', {
-    expiresIn: '1h', // Token valid for 1 hour
-  });
+  // Method to delete user
+  async deleteUser(userData: { email: string }): Promise<IUser | null> {
+    const deletedUser = await UserModel.findOneAndDelete({ email: userData.email });
 
+    if (!deletedUser) {
+      throw new Error(`Error occurred in deleting user with email: ${userData.email}`);
+    }
+    
+    return deletedUser;
+  }
 
-  return { user, resetToken }; // Return the user and the reset token
-}
+  // Method to reset user password
+  async resetPassword(userData: { email: string }): Promise<ResetPasswordResponse> {
+    const user = await UserModel.findOne({ email: userData.email });
+
+    if (!user) {
+      throw new Error(`User with email ${userData.email} does not exist.`);
+    }
+
+    const resetToken = generateResetToken(user.email);
+
+    return { user, resetToken };
+  }
 }
 
 export default UserRepository;
