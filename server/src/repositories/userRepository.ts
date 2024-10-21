@@ -51,5 +51,21 @@ class UserRepository {
        }
        return existingUsers;
   }
+
+ // Method to update user data
+async updateUserData(userData: { email: string; updates: Partial<IUser> }): Promise<IUser> {
+  const updatedUserData = await UserModel.findOneAndUpdate(
+    { email: userData.email }, // Filter by email
+    userData.updates,          // Fields to update
+    { new: true }             // Option to return the updated document
+  ).select('-password');       // Exclude the password
+
+  // Throw an error if there is a problem in updating the user data
+  if (!updatedUserData) {
+    throw new Error(`Error occurred in updating data for user with email: ${userData.email}`);
+  }
+  
+  return updatedUserData; // Return the updated user data
+}
 }
 export default UserRepository;
