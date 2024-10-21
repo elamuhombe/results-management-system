@@ -38,7 +38,7 @@ AssessmentMarkSchema.add({
     assessmentTitle: { type: String, required: true },
 });
 
-// Exporting the models
+// Export the models
 export const AttendanceMarkModel = model<IAttendanceMark>('AttendanceMark', AttendanceMarkSchema);
 export const ProjectReviewMarkModel = model<IProjectReviewMark>('ProjectReviewMark', ProjectReviewMarkSchema);
 export const LinkedInPostMarkModel = model<ILinkedInPostMark>('LinkedInPostMark', LinkedInPostMarkSchema);
