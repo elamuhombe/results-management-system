@@ -10,29 +10,30 @@ const BaseMarkSchema = new Schema<IBaseMark>({
 });
 
 // AttendanceMark schema
-const AttendanceMarkSchema = new Schema<IAttendanceMark>();
+const AttendanceMarkSchema = new Schema<IAttendanceMark>({}, { timestamps: true });
+
 AttendanceMarkSchema.add({
-    ...BaseMarkSchema.obj, // Use .obj to get the base schema fields
+    ...BaseMarkSchema.obj,
     attendancePercentage: { type: Number, required: true, min: 0, max: 100 },
     status: { type: String, enum: ['present', 'absent'], required: true },
-});
+}, );
 
 // ProjectReviewMark schema
-const ProjectReviewMarkSchema = new Schema<IProjectReviewMark>();
+const ProjectReviewMarkSchema = new Schema<IProjectReviewMark>({}, { timestamps: true });
 ProjectReviewMarkSchema.add({
     ...BaseMarkSchema.obj,
     feedback: { type: String, required: true },
 });
 
 // LinkedInPostMark schema
-const LinkedInPostMarkSchema = new Schema<ILinkedInPostMark>();
+const LinkedInPostMarkSchema = new Schema<ILinkedInPostMark>({}, { timestamps: true });
 LinkedInPostMarkSchema.add({
     ...BaseMarkSchema.obj,
     postLink: { type: String, required: true },
 });
 
 // AssessmentMark schema
-const AssessmentMarkSchema = new Schema<IAssessmentMark>();
+const AssessmentMarkSchema = new Schema<IAssessmentMark>({}, { timestamps: true });
 AssessmentMarkSchema.add({
     ...BaseMarkSchema.obj,
     assessmentTitle: { type: String, required: true },
