@@ -30,16 +30,26 @@ class UserRepository {
   //Method to get a specific user
   async getUserData(userData: { email: string }): Promise<IUser | null> {
     const existingUser = await UserModel.findOne({
-      email: userData.email,
+      email: userData.email
     }).select("-password");// exclude the password
 
-    // Throw an error if user data not found
+    // Throw an error if user data is not found
     if (!existingUser) {
-      // Throw an error if the user data is not found 
       throw new Error(`User with email ${userData.email} does not exist.`);
     }
     // Return existing user
     return existingUser;
+  }
+
+  //Method to get all users
+  async getAllUserData(): Promise<IUser[]>{
+    const existingUsers = await UserModel.find()
+      .select('-password')
+       //Throw an error if no users data are found
+       if(existingUsers.length === 0){
+        throw new Error ('There are no users registered')
+       }
+       return existingUsers;
   }
 }
 export default UserRepository;
