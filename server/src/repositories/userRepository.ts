@@ -3,6 +3,7 @@
 import { userValidationSchema } from "../validation/userValidation";
 import UserModel from "../models/userModel";
 import IUser from "../types/types";
+import bcrypt from 'bcrypt';
 
 class UserRepository {
   // Method to register and save a new user
@@ -20,9 +21,13 @@ class UserRepository {
         `User with email ${validatedUserData.email} already exists.`
       );
     }
+    // encrypt the password before saving
+    const hashedPassword = await bcrypt.hash(validatedUserData.password, 10)
 
     // Create a new user
-    const newUser = await UserModel.create(validatedUserData); // Pass validated user data
+    const newUser = await UserModel.create(
+      {...validatedUserData,
+    password:hashedPassword});
 
     return newUser; // Return the created user
   }
@@ -53,7 +58,7 @@ class UserRepository {
   }
 
  // Method to update user data
-async updateUserData(userData: { email: string; updates: Partial<IUser> }): Promise<IUser> {
+async updateUserData(userData: { email: string; updates: Partial<IUser> }): Promise<IUser | null> {
   const updatedUserData = await UserModel.findOneAndUpdate(
     { email: userData.email }, // Filter by email
     userData.updates,          // Fields to update
@@ -66,6 +71,17 @@ async updateUserData(userData: { email: string; updates: Partial<IUser> }): Prom
   }
   
   return updatedUserData; // Return the updated user data
+}
+
+//Method to delete user 
+async deleteUser(userData: {email: string}):Promise<IUser | null>{
+  const deletedUser = await UserModel.findOneAndDelete({email: userData.email});
+
+  // Throw an error if there is a problem with deleting a user
+  if(!deletedUser){
+    throw new Error(`Error occured in deleting user with email: ${userData.email}`);
+  }
+  return deletedUser;// return the deleted user
 }
 }
 export default UserRepository;
