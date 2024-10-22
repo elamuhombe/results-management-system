@@ -1,24 +1,18 @@
-// src/models/userModel.ts
-import { Schema, model } from "mongoose";
+//src/models/userModel.ts
+import { model, Schema } from "mongoose";
 import IUser from "../types/types";
 
-// Define the user schema
-const userSchema = new Schema<IUser>(
-    {
-        name: { type: String, required: true }, 
-        email: { type: String, required: true, unique: true}, 
-        password: { type: String, required: true},
-        userRole: {
-            type: String,
-            enum: ['admin', 'student'], 
-            required: true
-        }
-    },
-    {
-        timestamps: true // Automatically add createdAt and updatedAt fields
-    }
-);
+// User schema definition
+const userSchema = new Schema<IUser>({
+    _id: { type: Schema.Types.ObjectId, required: true, auto: true },
+    name: { type: String, required: true },                      // The name of the user
+    email: { type: String, required: true, unique: true },      // The email address of the user
+    password: { type: String, required: true },                 // The password for user authentication
+    userRole: { type: String, enum: ['admin', 'student'], required: true } // The role of the user
+}, {
+    timestamps: true, // Automatically create `createdAt` and `updatedAt` fields
+});
 
-// Create and export the user model
+// Export the User model
 const UserModel = model<IUser>("User", userSchema);
 export default UserModel;
