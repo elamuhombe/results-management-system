@@ -25,7 +25,7 @@ class UserRepository {
 
   // Method to get a specific user
   async getUserData(userData: { email: string }): Promise<IUser | null> {
-    const existingUser = await UserModel.findOne({ email: userData.email }).select("-password");
+    const existingUser = await UserModel.findOne({ email: userData.email });
     
     if (!existingUser) {
       throw new Error(`User with email ${userData.email} does not exist.`);
@@ -36,7 +36,7 @@ class UserRepository {
 
   // Method to get all users
   async getAllUserData(): Promise<IUser[]> {
-    const existingUsers = await UserModel.find().select('-password');
+    const existingUsers = await UserModel.find();
     
     if (existingUsers.length === 0) {
       throw new Error('There are no users registered');
@@ -51,7 +51,7 @@ class UserRepository {
       { email: userData.email },
       userData.updates,
       { new: true }
-    ).select('-password');
+    );
     
     if (!updatedUserData) {
       throw new Error(`Error occurred in updating data for user with email: ${userData.email}`);
