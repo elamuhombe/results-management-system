@@ -1,9 +1,21 @@
 //src/validation/marksValidation.ts
 
+import mongoose from 'mongoose';
 import { z } from 'zod';
+
+// Custom validation for ObjectId
+const objectId = z.string().refine(value => mongoose.Types.ObjectId.isValid(value), {
+    message: 'Invalid ObjectId format',
+});
+// Schema for the User with only _id and userRole
+const studentSchema = z.object({
+    _id: objectId,
+    userRole: z.literal('student'), // Ensuring userRole is 'student'
+});
 
 // Base schema for BaseMark
 const baseMarkSchema = z.object({
+    student: studentSchema, // Include student object with limited properties
     studentId: z.string().min(1, 'Student ID is required'),
     marks: z.number().min(0, 'Marks must be a non-negative number'),
     date: z.date(),
@@ -11,6 +23,7 @@ const baseMarkSchema = z.object({
 
 // Validation schema for AttendanceMark
 export const attendanceMarkValidationSchema = baseMarkSchema.extend({
+    _id: objectId, 
     attendancePercentage: z.number().min(0).max(100, 'Attendance percentage must be between 0 and 100'),
     status: z.enum(['present', 'absent']),
 });
