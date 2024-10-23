@@ -1,8 +1,9 @@
 // src/repositories/userRepository.ts
 
-import { validateUserData, checkExistingUser, hashPassword, generateResetToken } from "./userValidationRepository";
+
 import UserModel from "../models/userModel";
 import IUser, { ResetPasswordResponse } from "../types/types";
+import { checkExistingUser, generateResetToken, hashPassword, validateUserData } from "./validation/userValidationRepository";
 
 class UserRepository {
   // Method to register and save a new user
