@@ -10,6 +10,7 @@ const objectId = z.string().refine(value => mongoose.Types.ObjectId.isValid(valu
 // Schema for the User with only _id and userRole
 const studentSchema = z.object({
     _id: objectId,
+    name:z.string().min(1, 'student name is required'),
     userRole: z.literal('student'), // Ensuring userRole is 'student'
 });
 
@@ -30,11 +31,13 @@ export const attendanceMarkValidationSchema = baseMarkSchema.extend({
 
 // Validation schema for ProjectReviewMark
 export const projectReviewMarkValidationSchema = baseMarkSchema.extend({
+    _id: objectId, 
     feedback: z.string().optional(),
 });
 
 // Validation schema for LinkedInPostMark
 export const linkedInPostMarkValidationSchema = baseMarkSchema.extend({
+    _id: objectId, 
     postLink: z.string().url('Invalid URL format for LinkedIn post link'),
 });
 
@@ -45,6 +48,7 @@ export const assessmentMarkValidationSchema = baseMarkSchema.extend({
 
 // Validation schema for TotalMarks
 export const totalMarksValidationSchema = z.object({
+    _id: objectId, 
     studentId: z.string().min(1, 'Student ID is required'),
     totalAttendanceMarks: z.number().min(0, 'Total attendance marks must be a non-negative number'),
     totalProjectReviewMarks: z.number().min(0, 'Total project review marks must be a non-negative number'),
