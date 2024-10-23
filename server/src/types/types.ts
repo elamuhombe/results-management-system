@@ -1,4 +1,4 @@
-import mongoose, { Document, ObjectId, Types } from "mongoose";
+import mongoose, { Types } from "mongoose";
 
 // Interface representing a user in the system
 export default interface IUser {
@@ -36,7 +36,8 @@ export enum MarkCategory {
 }
 
 // Base interface for different types of marks
-export interface IBaseMark extends Document {
+export interface IBaseMark  {
+  student: Pick<IUser, '_id'> & { userRole: 'student' }; // Only include _id and userRole
   studentId: string; // Unique identifier for the student (ObjectId)
   marks: number; // Marks received by the student
   date: Date; // Date of the marks entry
@@ -44,13 +45,15 @@ export interface IBaseMark extends Document {
 
 // Interface for attendance marks, extending BaseMark
 export interface IAttendanceMark extends IBaseMark {
+ 
+  _id: Types.ObjectId;
   attendancePercentage: number; // Percentage of attendance
   status: "present" | "absent"; // Attendance status of the student
 }
-// Extend with Document for Mongoose-specific properties
-export interface IAttendanceMarkDocument extends IAttendanceMark, Document {
-  _id: Types.ObjectId;
-}
+// // Extend with Document for Mongoose-specific properties
+// export interface IAttendanceMarkDocument extends IAttendanceMark, Document {
+  
+// }
 
 // Interface for project review marks, extending BaseMark
 export interface IProjectReviewMark extends IBaseMark {
