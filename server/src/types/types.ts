@@ -50,10 +50,6 @@ export interface IAttendanceMark extends IBaseMark {
   attendancePercentage: number; // Percentage of attendance
   status: "present" | "absent"; // Attendance status of the student
 }
-// // Extend with Document for Mongoose-specific properties
-// export interface IAttendanceMarkDocument extends IAttendanceMark, Document {
-  
-// }
 
 // Interface for project review marks, extending BaseMark
  
