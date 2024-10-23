@@ -6,10 +6,12 @@ import { IBaseMark, IAttendanceMark, IProjectReviewMark, ILinkedInPostMark, IAss
 // BaseMark schema
 const BaseMarkSchema = new Schema<IBaseMark>({
     student: {
-        _id: { type: Schema.Types.ObjectId, required: true, auto: true }, // Unique identifier for the student
-        userRole: { type: String, required: true, enum: ['student'], default: 'student' }, // User role set to 'student'
+        _id: { type: Schema.Types.ObjectId, required: true },
+        name: { type: String, required: true }, // Student name
+        userRole: { type: String, required: true, enum: ['student'] }, // Only 'student' role
+        studentId: { type: String, required: true }, // Student ID
     },
-    studentId: { type: String, required: true }, // Unique identifier for the student (ObjectId)
+   
     marks: { type: Number, required: true, min: 0 }, // Marks received by the student
     date: { type: Date, required: true }, // Date of the marks entry
 });
@@ -28,6 +30,7 @@ AttendanceMarkSchema.add({
 const ProjectReviewMarkSchema = new Schema<IProjectReviewMark>({}, { timestamps: true });
 ProjectReviewMarkSchema.add({
     ...BaseMarkSchema.obj,
+    _id: { type: Schema.Types.ObjectId, required: true, auto: true },
     feedback: { type: String, required: true },
 });
 
