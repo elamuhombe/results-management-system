@@ -3,6 +3,7 @@ import mongoose, { Types } from "mongoose";
 // Interface representing a user in the system
 export default interface IUser {
   _id: Types.ObjectId;
+  userId:string;
   name: string; // The name of the user
   studentId?: string;//Unique student id
   email: string; // The email address of the user
@@ -18,7 +19,7 @@ export interface ResetPasswordResponse {
 // Interface representing session
 export interface ISession {
   _id: Types.ObjectId;
-  user: IUser;
+  userId: string;
   sessionId: string;
   expiresAt: Date; // Session expiration time
   ipAddress: string; // IP address of the user
@@ -50,10 +51,6 @@ export interface IAttendanceMark extends IBaseMark {
   attendancePercentage: number; // Percentage of attendance
   status: "present" | "absent"; // Attendance status of the student
 }
-// // Extend with Document for Mongoose-specific properties
-// export interface IAttendanceMarkDocument extends IAttendanceMark, Document {
-  
-// }
 
 // Interface for project review marks, extending BaseMark
  
