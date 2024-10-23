@@ -4,6 +4,7 @@ import mongoose, { Types } from "mongoose";
 export default interface IUser {
   _id: Types.ObjectId;
   name: string; // The name of the user
+  studentId?: string;//Unique student id
   email: string; // The email address of the user
   password: string; // The password for user authentication
   userRole: "admin" | "student"; // The role of the user in the system
@@ -37,8 +38,7 @@ export enum MarkCategory {
 
 // Base interface for different types of marks
 export interface IBaseMark  {
-  student: Pick<IUser, '_id'> & { userRole: 'student' }; // Only include _id and userRole
-  studentId: string; // Unique identifier for the student (ObjectId)
+  student: Pick<IUser, '_id'> & { userRole: 'student', studentId: string, name: string }; // Only include _id and userRole
   marks: number; // Marks received by the student
   date: Date; // Date of the marks entry
 }
@@ -56,23 +56,28 @@ export interface IAttendanceMark extends IBaseMark {
 // }
 
 // Interface for project review marks, extending BaseMark
+ 
 export interface IProjectReviewMark extends IBaseMark {
+  _id: Types.ObjectId;
   feedback: string; // Feedback provided for the project review
 }
 
 // Interface for LinkedIn post marks, extending BaseMark
 export interface ILinkedInPostMark extends IBaseMark {
+  _id: Types.ObjectId;
   postLink: string; // Link to the student's LinkedIn post
 }
 
 // Interface for Assessment marks, extending BaseMark
 export interface IAssessmentMark extends IBaseMark {
+  _id: Types.ObjectId;
   assessmentTitle: string; // Title of the assessment
 }
 
 // Interface representing total marks for a student
 export interface ITotalMarks {
-  studentId: mongoose.Types.ObjectId; // Unique identifier for the student (ObjectId)
+  _id: Types.ObjectId;
+  student: Pick<IUser, '_id'> & { userRole: 'student', studentId: string, name: string }; // Only include _id and userRole
   totalAttendanceMarks: number; // Total attendance marks
   totalProjectReviewMarks: number; // Total project review marks
   totalLinkedInPostMarks: number; // Total LinkedIn post marks
