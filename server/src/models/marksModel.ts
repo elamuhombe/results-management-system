@@ -1,12 +1,17 @@
 //src/models/marksModel.ts
-import mongoose, { model, Schema } from "mongoose";
+import  { model, Schema } from "mongoose";
 import { IBaseMark, IAttendanceMark, IProjectReviewMark, ILinkedInPostMark, IAssessmentMark } from "../types/types";
+
 
 // BaseMark schema
 const BaseMarkSchema = new Schema<IBaseMark>({
-    studentId: { type: String, required: true },
-    marks: { type: Number, required: true, min: 0 },
-    date: { type: Date, required: true },
+    student: {
+        _id: { type: Schema.Types.ObjectId, required: true, auto: true }, // Unique identifier for the student
+        userRole: { type: String, required: true, enum: ['student'], default: 'student' }, // User role set to 'student'
+    },
+    studentId: { type: String, required: true }, // Unique identifier for the student (ObjectId)
+    marks: { type: Number, required: true, min: 0 }, // Marks received by the student
+    date: { type: Date, required: true }, // Date of the marks entry
 });
 
 // AttendanceMark schema
@@ -14,6 +19,7 @@ const AttendanceMarkSchema = new Schema<IAttendanceMark>({}, { timestamps: true 
 
 AttendanceMarkSchema.add({
     ...BaseMarkSchema.obj,
+    _id: { type: Schema.Types.ObjectId, required: true, auto: true },
     attendancePercentage: { type: Number, required: true, min: 0, max: 100 },
     status: { type: String, enum: ['present', 'absent'], required: true },
 }, );
