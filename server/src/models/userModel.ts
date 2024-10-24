@@ -6,7 +6,7 @@ import IUser from "../types/types";
 const userSchema = new Schema<IUser>({
     _id: { type: Schema.Types.ObjectId, required: true, auto: true },
     name: { type: String, required: true },
-    userId: { type: String, required: true },                      // The name of the user
+    userId: { type: String, required: true }, // name of the user                     
     studentId: { type: String, required: function() 
         { return this.userRole === 'student'; } }, // Required for 'student' role
     email: { type: String, required: true, unique: true },      // The email address of the user
