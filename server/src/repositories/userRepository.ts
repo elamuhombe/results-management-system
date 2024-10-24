@@ -1,9 +1,8 @@
 // src/repositories/userRepository.ts
-
-
 import UserModel from "../models/userModel";
 import IUser, { ResetPasswordResponse } from "../types/types";
 import { checkExistingUser, generateResetToken, hashPassword, validateUserData } from "./validation/userValidationRepository";
+import { v4 as uuidv4 } from 'uuid';
 
 class UserRepository {
   // Method to register and save a new user
@@ -21,8 +20,13 @@ class UserRepository {
     }
     
     const hashedPassword = await hashPassword(validatedUserData.password);
+
+        // Generate a unique userId
+        const userId = uuidv4();  // Generate userId using uuid
+
     const newUser = await UserModel.create({
       ...validatedUserData,
+      userId,
       password: hashedPassword,
     });
 
