@@ -5,16 +5,17 @@ import { ISession } from "../types/types";
 
 // Session schema
 const sessionSchema = new Schema<ISession>({
+ user: {
+    userId:{type: String, require: true}
+  
+},
     _id: { type: Schema.Types.ObjectId, required: true, auto: true },
-    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     sessionId: { type: String, required: true },
     expiresAt: { type: Date, required: true },
     ipAddress: { type: String, required: true },
     userAgent: { type: String, required: true },
     isActive: { type: Boolean, required: true },
-    createdAt: { type: Date, default: Date.now },
-    updatedAt: { type: Date, default: Date.now },
-  });
+  },{timestamps: true});
 
 // export the model
 export const SessionModel = model<ISession>("sessionModel", sessionSchema)

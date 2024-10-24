@@ -1,62 +1,46 @@
-//src/repositories/sessionRepository.ts
 import { SessionModel } from "../models/sessionModel";
 import { ISession } from "../types/types";
 import ErrorHandler from "../utils/ErrorHandler";
-import sessionSchema from "../validation/sessionValidation";
-import { Types } from "mongoose";
+import { checkExistingSession, validateSessionData } from "./validation/sessionValidationRepository";
 
 class SessionRepository {
   // Method to create a new session
-  async createSession(sessionData: any): Promise<ISession> {
+  async createSession(sessionData: ISession): Promise<ISession> {
     // Validate the input data
-    const validatedData = sessionSchema.parse(sessionData);
+    const validatedSessionData = await validateSessionData(sessionData);
 
-    // Convert string IDs to ObjectId
-    const session: ISession = {
-      _id: new Types.ObjectId(validatedData._id), // Convert to ObjectId
-      user: {
-        _id: new Types.ObjectId(validatedData.user._id), // Convert to ObjectId
-        email: validatedData.user.email,
-        password: validatedData.user.password,
-        name: validatedData.user.name,
-        userRole: validatedData.user.userRole,
-      },
-      sessionId: validatedData.sessionId,
-      expiresAt: validatedData.expiresAt,
-      ipAddress: validatedData.ipAddress,
-      userAgent: validatedData.userAgent,
-      isActive: validatedData.isActive,
-      createdAt: validatedData.createdAt,
-      updatedAt: validatedData.updatedAt,
-    };
-
-    // Proceed to save the session to the database
-    const sessionModel = new SessionModel(session);
-    return await sessionModel.save();
-  }
-
-  // Method to find a session by user ID
-  async findSessionByUserId(userId: string): Promise<ISession | null> {
-    const session = await SessionModel.findOne({
-      "user._id": userId,
-      isActive: true,
-    });
-    console.log(session); // Log to check what is being returned
-
-    if (!session) {
-      throw new ErrorHandler(
-        `No active session found for user ID: ${userId}`,
-        404
-      );
+    // Check for existing user Id before creating a new one
+    const existingSession = await checkExistingSession(validatedSessionData.user.userId);
+    if (existingSession) {
+      throw new ErrorHandler(`Session data already exists for user  with  ID ${validatedSessionData.user.userId}`, 409);
     }
 
-    return session;
+    // Create a new session in the database
+    const newSessionValidatedData = await SessionModel.create(validatedSessionData);
+    return newSessionValidatedData;
   }
 
+// Method to find a session by user ID
+async getSessionByUserId(userId: string): Promise<ISession | null> {
+  // Find an active session for the given user ID
+  const session = await SessionModel.findOne({
+      "userId": userId,
+      isActive: true,
+  });
+
+  // If no session is found, throw an error with the expected message
+  if (!session) {
+      throw new ErrorHandler(`Session with ID ${userId} does not exist.`, 404);
+  }
+
+  // Return the found session
+  return session;
+}
+
+
   // Method to find a session by session ID
-  async findSessionById(sessionId: string): Promise<ISession | null> {
+  async getSessionById(sessionId: string): Promise<ISession | null> {
     const session = await SessionModel.findOne({ sessionId, isActive: true });
-    console.log(session); // Log to check what is being returned
 
     if (!session) {
       throw new ErrorHandler(`No session found with ID: ${sessionId}`, 404);
@@ -65,23 +49,35 @@ class SessionRepository {
     return session;
   }
 
+  //Method to get all active sessions by user id
+  async getAllActiveSessionsByUserId(userId: string):Promise<ISession[]>{
+    const allActiveSessions = await SessionModel.find({userId, isActive: true})
+
+    if(allActiveSessions.length === 0){
+      throw new ErrorHandler(`No sessions were found`, 404); 
+    }
+    return allActiveSessions
+  }
+
   // Method to deactivate a session
   async deactivateSession(sessionId: string): Promise<ISession | null> {
     const session = await SessionModel.findOneAndUpdate(
-      { sessionId: sessionId },
+      { sessionId },
       { isActive: false, updatedAt: new Date() },
       { new: true }
     );
 
     if (!session) {
-      throw new ErrorHandler(
-        `No active session found with ID: ${sessionId}`,
-        404
-      );
+      throw new ErrorHandler(`No active session found with ID: ${sessionId}`, 404);
     }
 
     // Return the session populated with the user field
     return session.populate("user");
+  }
+
+  // Optional: Method to list all active sessions (if needed)
+  async listActiveSessions(): Promise<ISession[]> {
+    return await SessionModel.find({ isActive: true });
   }
 }
 

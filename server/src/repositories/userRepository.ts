@@ -10,6 +10,11 @@ class UserRepository {
   async registerUser(userData: any): Promise<IUser> {
     const validatedUserData = await validateUserData(userData);
 
+    // Check if studentId is provided if the userRole is 'student'
+    if (validatedUserData.userRole === 'student' && !validatedUserData.studentId) {
+      throw new Error('studentId is required for users with the role of student.');
+    }
+
     const existingUser = await checkExistingUser(validatedUserData.email);
     if (existingUser) {
       throw new Error(`User with email ${validatedUserData.email} already exists.`);
