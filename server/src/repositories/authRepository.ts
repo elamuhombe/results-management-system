@@ -8,12 +8,6 @@ import IUser from '../types/types';
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
 
 class AuthRepository {
-    // Register a new user
-    async registerUser(email: string, password: string): Promise<IUser> {
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = new UserModel({ email, password: hashedPassword });
-        return await newUser.save();
-    }
 
     // Login a user
     async loginUser(email: string, password: string): Promise<{ token: string; user: IUser }> {
