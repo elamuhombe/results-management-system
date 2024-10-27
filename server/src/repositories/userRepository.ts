@@ -91,7 +91,7 @@ class UserRepository {
 
     const resetToken = generateResetToken(user.email);
 
-    return { user, resetToken };
+    return { user, resetToken, message:'', success: true };
   }
 }
 
