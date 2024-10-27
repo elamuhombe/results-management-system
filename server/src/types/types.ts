@@ -19,14 +19,12 @@ export interface ResetPasswordResponse {
 // Interface representing session
 export interface ISession {
   _id: Types.ObjectId;
-  userId: string;
+  user: Pick<IUser, 'userId'>
   sessionId: string;
   expiresAt: Date; // Session expiration time
   ipAddress: string; // IP address of the user
   userAgent: string; // Details about the user's browser or device
   isActive: boolean; // Status of the session
-  createdAt?: Date;
-  updatedAt?: Date;
 }
 
 export enum MarkCategory {
