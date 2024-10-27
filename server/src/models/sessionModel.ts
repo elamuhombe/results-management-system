@@ -10,7 +10,7 @@ const sessionSchema = new Schema<ISession>({
   
 },
     _id: { type: Schema.Types.ObjectId, required: true, auto: true },
-    sessionId: { type: String, required: true },
+    sessionId: { type: String, Unique: true},
     expiresAt: { type: Date, required: true },
     ipAddress: { type: String, required: true },
     userAgent: { type: String, required: true },
