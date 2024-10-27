@@ -4,7 +4,11 @@ import { model, Schema } from "mongoose";
 import { ITotalMarks } from "../types/types";
 
 const totalMarksSchema = new Schema({
-    studentId: { type: String, required: true },
+    student: {
+        _id: { type: Schema.Types.ObjectId, required: true },
+        userRole: { type: String, required: true, enum: ['student'] }, // Only 'student' role
+        studentId: { type: String, required: true }, // Student ID
+    },
     totalAttendanceMarks: { type: Number },
     totalProjectReviewMarks: { type: Number },
     totalLinkedInPostMarks: { type: Number },
