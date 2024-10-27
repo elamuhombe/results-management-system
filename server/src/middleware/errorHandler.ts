@@ -3,6 +3,7 @@ import { Request, Response, NextFunction } from 'express';
 import { ZodError } from 'zod';
 import ErrorHandler from '../utils/ErrorHandler';
 
+
 const errorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
   if (err instanceof ZodError) {
     // Handle Zod validation errors
@@ -15,7 +16,7 @@ const errorHandler = (err: any, req: Request, res: Response, next: NextFunction)
   }
 
   // Handle other errors
-  return res.status(500).json({ message: 'Internal Server Error' });
+  return res.status(500).json({ message: err.message || 'Internal Server Error' });
 };
 
 export default errorHandler;
