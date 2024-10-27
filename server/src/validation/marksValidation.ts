@@ -10,14 +10,13 @@ const objectId = z.string().refine(value => mongoose.Types.ObjectId.isValid(valu
 // Schema for the User with only _id and userRole
 const studentSchema = z.object({
     _id: objectId,
+    studentId: z.string().min(1, 'Student ID is required'),
     name:z.string().min(1, 'student name is required'),
-    userRole: z.literal('student'), // Ensuring userRole is 'student'
-});
+})
 
 // Base schema for BaseMark
 const baseMarkSchema = z.object({
     student: studentSchema, // Include student object with limited properties
-    studentId: z.string().min(1, 'Student ID is required'),
     marks: z.number().min(0, 'Marks must be a non-negative number'),
     date: z.date(),
 });
@@ -32,8 +31,16 @@ export const attendanceMarkValidationSchema = baseMarkSchema.extend({
 // Validation schema for ProjectReviewMark
 export const projectReviewMarkValidationSchema = baseMarkSchema.extend({
     _id: objectId, 
+    project_title: z.string().min(12,'Project title is required'),
     feedback: z.string().optional(),
 });
+// Validation schema for projectSubmissionMark
+export const projectSubmissionMarkValidationSchema = baseMarkSchema.extend({
+    _id: objectId,
+    project_title: z.string().min(12,'Project title is required')
+});
+// validation schema for ProjectSubmissionMark
+
 
 // Validation schema for LinkedInPostMark
 export const linkedInPostMarkValidationSchema = baseMarkSchema.extend({
@@ -43,7 +50,8 @@ export const linkedInPostMarkValidationSchema = baseMarkSchema.extend({
 
 // Validation schema for AssessmentMark
 export const assessmentMarkValidationSchema = baseMarkSchema.extend({
-    assessmentTitle: z.string().min(1, 'Assessment title is required'),
+    _id: objectId,
+    subject: z.string().min(1, 'Assessment title is required'),
 });
 
 // Validation schema for TotalMarks

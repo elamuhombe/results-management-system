@@ -1,5 +1,6 @@
 // src/services/sessionService.ts
 
+import mongoose from 'mongoose';
 import { SessionModel } from '../models/sessionModel';
 import SessionRepository from '../repositories/sessionRepository';
 import IUser, { ISession } from '../types/types'; // Assuming IUser is defined in your types
@@ -20,18 +21,9 @@ class SessionService {
 
   // Find a session by user ID
   async findSessionByUserId(userId: string): Promise<ISession | null> {
-    return await this.sessionRepository.findSessionByUserId(userId);
+    return await this.sessionRepository.getSessionByUserId(userId);
   }
 
-  // Update a session
-  async updateSession(sessionId: string, updateData: Partial<ISession>): Promise<ISession | null> {
-    return await this.sessionRepository.updateSession(sessionId, updateData);
-  }
-
-  // Delete a session
-  async deleteSession(sessionId: string): Promise<ISession | null> {
-    return await this.sessionRepository.deleteSession(sessionId);
-  }
 
  // Login method
 async login(user: IUser, password: string, ipAddress: string, userAgent: string): Promise<ISession | null> {
@@ -47,12 +39,18 @@ async login(user: IUser, password: string, ipAddress: string, userAgent: string)
   
     // Create a new session data object
     const sessionData: ISession = {
-      userId: user.userId,
+      user: {
+        userId: user.userId,
+      },
       expiresAt: new Date(Date.now() + 3600000), // Session expires in 1 hour
       ipAddress: ipAddress,
       userAgent: userAgent,
       isActive: true,
+      _id: new mongoose.Types.ObjectId(),
+      sessionId: new mongoose.Types.ObjectId().toString() // Generate a session ID
     };
+    
+    
   
     // Save the session data to the database using Mongoose model
     const newSession = new SessionModel(sessionData);

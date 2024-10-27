@@ -32,5 +32,5 @@ export const userValidationSchema = z.object({
     .string()
     .min(1, "studentId is required")
     .max(10, "studentId must be at most 10 characters long"),
-  userRole: z.enum(["admin", "student"]), // Enum for user roles
-});
+  userRole: z.enum(["admin", "student"])
+})

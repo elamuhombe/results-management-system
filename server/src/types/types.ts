@@ -1,3 +1,4 @@
+//src/types/types.ts
 import mongoose, { Types } from "mongoose";
 
 // Interface representing a user in the system
@@ -14,12 +15,14 @@ export default interface IUser {
 export interface ResetPasswordResponse {
   user: IUser; // The user object
   resetToken: string; // The generated reset token
+  success: boolean;
+  message: string;
 }
 
 // Interface representing session
 export interface ISession {
   _id: Types.ObjectId;
-  user: Pick<IUser, 'userId'>
+  user: Pick<IUser, 'userId'>;
   sessionId: string;
   expiresAt: Date; // Session expiration time
   ipAddress: string; // IP address of the user
@@ -37,7 +40,7 @@ export enum MarkCategory {
 
 // Base interface for different types of marks
 export interface IBaseMark  {
-  student: Pick<IUser, '_id'> & { userRole: 'student', studentId: string, name: string }; // Only include _id and userRole
+  student: Pick<IUser, '_id'> & {  studentId: string, name: string }; // Only include _id and userRole
   marks: number; // Marks received by the student
   date: Date; // Date of the marks entry
 }
@@ -54,8 +57,17 @@ export interface IAttendanceMark extends IBaseMark {
  
 export interface IProjectReviewMark extends IBaseMark {
   _id: Types.ObjectId;
+  project_title: string
   feedback: string; // Feedback provided for the project review
 }
+
+//Interface for project submisssion marks, extending BaseMark
+export interface IProjectSubmissionMark extends IBaseMark{
+  _id: Types.ObjectId;
+  project_title: string; // Project title
+
+}
+
 
 // Interface for LinkedIn post marks, extending BaseMark
 export interface ILinkedInPostMark extends IBaseMark {
@@ -66,13 +78,13 @@ export interface ILinkedInPostMark extends IBaseMark {
 // Interface for Assessment marks, extending BaseMark
 export interface IAssessmentMark extends IBaseMark {
   _id: Types.ObjectId;
-  assessmentTitle: string; // Title of the assessment
+ subject: string; // Title of the assessment
 }
 
 // Interface representing total marks for a student
 export interface ITotalMarks {
   _id: Types.ObjectId;
-  student: Pick<IUser, '_id'> & { userRole: 'student', studentId: string, name: string }; // Only include _id and userRole
+  student: Pick<IUser, '_id'> & { studentId: string, name: string }; // Only include _id and userRole
   totalAttendanceMarks: number; // Total attendance marks
   totalProjectReviewMarks: number; // Total project review marks
   totalLinkedInPostMarks: number; // Total LinkedIn post marks

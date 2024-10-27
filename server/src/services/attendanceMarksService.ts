@@ -16,7 +16,7 @@ class AttendanceMarkService {
     }
 
     // Service method to get all attendance marks
-    async getAllAttendanceMarks(): Promise<IAttendanceMark[]> {
+    async getAllAttendanceMarks(): Promise<IAttendanceMark[]|null> {
         return await this.attendanceMarkRepository.getAllAttendanceMarks();
     }
 
@@ -26,12 +26,17 @@ class AttendanceMarkService {
     }
 
     // Service method to update attendance mark
-    async updateAttendanceMark(studentId: string, updates: Partial<IAttendanceMark>): Promise<IAttendanceMark | null> {
-        return await this.attendanceMarkRepository.updateAttendanceDataByStudentId(studentId)
+    async updateAttendanceMark(studentId: string, updates: Partial<IAttendanceMark >): Promise<IAttendanceMark | null> {
+        return await this.attendanceMarkRepository.updateAttendanceDataByStudentId(studentId, updates)
     }
 
     // Service method to delete an attendance mark
-    async deleteAttendanceMark(studentId: string): Promise<IAttendanceMark | null> {
+    async deleteAttendanceMark(studentId: string): Promise<IAttendanceMark | null > {
+        const deletedAttendanceData = await this.attendanceMarkRepository.deleteAttendanceMark(studentId)
+        if (deletedAttendanceData === null) {
+            console.warn(`No assessment mark found for student ID: ${studentId}`);
+            return null;
+        }
         return await this.attendanceMarkRepository.deleteAttendanceMark(studentId);
     }
 }
