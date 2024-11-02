@@ -2,12 +2,12 @@
 import React, { useState } from 'react';
 
 const AdminDashboard: React.FC = () => {
-  const[activeTab, setActiveTab] = useState('attendanceTab')
+  const [activeTab, setActiveTab] = useState<keyof typeof tabContent>('attendanceTab');
   const tabContent = {
     attendanceTab: <p>Attendance Marks Tab</p>,
     projectReviewTab:<p>Project Review Marks Tab</p>,
     assessmentTab:<p>Assessment Marks Tab</p>,
-    projectSubmission:<p>Project Submission Marks  Tab</p>,
+    projectSubmissionTab:<p>Project Submission Marks  Tab</p>,
     linkedinTab:<p>Linkedin Marks Tab</p>,
     resultsTab:<p>Results Tab</p>
   }
@@ -41,6 +41,9 @@ const AdminDashboard: React.FC = () => {
         <h2>Overview</h2>
         <p>Welcome to the Admin Dashboard! Here you can manage users, view reports, and adjust settings.</p>
       </section>
+      <div>
+        {tabContent[activeTab] ??<p>'no content available'</p>}
+      </div>
     </div>
   );
 };
