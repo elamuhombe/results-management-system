@@ -1,49 +1,63 @@
-//src/components/dashboard/AdminDashBoard/AdminDashboard.tsx
-import React, { useState } from 'react';
+//src/components/dashboard/AdminDashboard/AdminDashboard.tsx
+import React, { useState } from "react";
+import { AssessmentMarks, AttendanceMarks, LinkedinMarks, ProjectReviewMarks, ProjectSubmissionMarks, Results } from "./index";
+
+type TabKeys = "attendanceTab" | "projectReviewTab" | "assessmentTab" | "projectSubmissionTab" | "linkedinTab" | "resultsTab";
 
 const AdminDashboard: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<keyof typeof tabContent>('attendanceTab');
-  const tabContent = {
-    attendanceTab: <p>Attendance Marks Tab</p>,
-    projectReviewTab:<p>Project Review Marks Tab</p>,
-    assessmentTab:<p>Assessment Marks Tab</p>,
-    projectSubmissionTab:<p>Project Submission Marks  Tab</p>,
-    linkedinTab:<p>Linkedin Marks Tab</p>,
-    resultsTab:<p>Results Tab</p>
-  }
+  // State to keep track of the currently active tab
+  const [activeTab, setActiveTab] = useState<TabKeys>("attendanceTab");
 
-  return(
+  // Define the content for each tab
+  const tabContent: Record<TabKeys, JSX.Element> = {
+    attendanceTab: <AttendanceMarks />,
+    projectReviewTab: <ProjectReviewMarks />,
+    assessmentTab: <AssessmentMarks />,
+    projectSubmissionTab: <ProjectSubmissionMarks />,
+    linkedinTab: <LinkedinMarks />,
+    resultsTab: <Results />,
+  };
+
+  // Define the tabs for rendering buttons with explicit types
+  const tabs: { id: TabKeys; label: string }[] = [
+    { id: "attendanceTab", label: "Attendance Tab" },
+    { id: "projectReviewTab", label: "Project Review Tab" },
+    { id: "assessmentTab", label: "Assessment Tab" },
+    { id: "projectSubmissionTab", label: "Project Submission Tab" },
+    { id: "linkedinTab", label: "LinkedIn Tab" },
+    { id: "resultsTab", label: "Results Tab" },
+  ];
+
+  return (
     <div>
-      <div>
-        <button onClick ={()=>setActiveTab('attendanceTab')}>
-          Attendance Marks Tab
-        </button>
-        <button onClick={()=>setActiveTab('projectReviewTab')}>
-          Project Review Marks Tab
-        </button>
-        <button onClick={()=>setActiveTab('assessmentTab')}>
-          Assessment Tab
-        </button>
-        <button onClick ={()=>setActiveTab('projectSubmissionTab')}>
-          Project Submission Marks Tab
-        </button>
-        <button onClick={()=>setActiveTab('linkedinTab')}>
-          Linkedin Marks Tab
-        </button>
-        <button onClick={()=>setActiveTab('resultsTab')}>
-          Results Tab
-        </button>
-      </div>
+      {/* Main heading for the Admin Dashboard */}
       <h1>Admin Dashboard</h1>
-      
-      
+
+      {/* Overview section providing a brief description of the dashboard */}
       <section>
         <h2>Overview</h2>
-        <p>Welcome to the Admin Dashboard! Here you can manage users, view reports, and adjust settings.</p>
+        <p>
+          Welcome to the Admin Dashboard! Here you can manage users, view
+          reports, and adjust settings.
+        </p>
       </section>
-      <div>
-        {tabContent[activeTab] ??<p>'no content available'</p>}
+
+      {/* Buttons for each tab */}
+      <div className="flex gap-4 m-4">
+        {tabs.map(tab => (
+          <button
+            key={tab.id}
+            className={`p-2 rounded ${activeTab === tab.id ? 'bg-purple-500 text-white' : 'bg-gray-200 text-black'}`}
+            onClick={() => setActiveTab(tab.id)}
+            aria-pressed={activeTab === tab.id}
+          >
+            {tab.label}
+          </button>
+        ))}
       </div>
+
+      {/* Conditionally render the content of the currently active tab */}
+      <div>{tabContent[activeTab]}</div>
     </div>
   );
 };
