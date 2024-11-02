@@ -20,5 +20,5 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src", "src/services/UserService.ts"]
+  "include": ["src", "src/services/apis/UserService.ts"]
 }
