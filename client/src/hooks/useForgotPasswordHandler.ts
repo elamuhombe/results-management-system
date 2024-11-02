@@ -1,14 +1,29 @@
-//src/hooks/useForgotPasswordHandler.ts
-
-import { useNavigate } from "react-router-dom";
+import { useState } from 'react';
+import { resetPassword } from '../services/apis/index';
 
 export const useForgotPasswordHandler = () => {
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  //navigate to ForgotPasswordForm when clicked
+  const handleForgotPassword = async (email: string) => {
 
-  const handleForgotPassword = () => {
-    navigate("/reset-password");
+try {
+      setLoading(true);
+      setError(null);
+      const {user, resetToken}= await resetPassword(email)
+      console.log('user', user, resetToken)
+    } catch (err: any) {
+      setError(err.message || "reset password failed.");
+    } finally {
+      setLoading(false); // Reset loading state after attempting reset password
+    }
   };
-  return { handleForgotPassword };
+
+  return {
+    loading,
+    error,
+
+    handleForgotPassword,
+  };
 };
+
