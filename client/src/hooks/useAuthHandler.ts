@@ -1,31 +1,31 @@
 // src/hooks/useAuthHandler.ts
 
 import { useState } from "react";
-import { login } from "../services/apis/index"; // Ensure the import path is correct
+import { login } from "../services/apis/index"; 
+import { useNavigate } from 'react-router-dom';
 
 export const useAuthHandler = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const handleLogin = async (email: string, password: string) => {
     try {
       setLoading(true);
       setError(null); // Reset any previous error
 
-      const { token, user } = await login(email, password); // Call the imported login function
-      console.log("Authenticated user:", user);
-      console.log("User role:", user.userRole);
+      const { token, user } = await login(email, password); // Call the imported login function from api
+      console.log('user', user)
 
       // Store the token in localStorage
       localStorage.setItem("token", token);
 
-      // Optionally, redirect or update UI based on user role
       if (user.userRole === "admin") {
-        // Redirect to admin dashboard (e.g., using react-router)
-        // Example: history.push('/admin/dashboard');
+        // Redirect to admin dashboard
+        navigate('/admin/dashboard');
       } else if (user.userRole === "student") {
-        // Redirect to student dashboard (e.g., using react-router)
-        // Example: history.push('/student/dashboard');
+        // Redirect to student dashboard
+        navigate('/student/dashboard')
       }
     } catch (err: any) {
       setError(err.message || "Login failed. Please check your credentials and try again.");
